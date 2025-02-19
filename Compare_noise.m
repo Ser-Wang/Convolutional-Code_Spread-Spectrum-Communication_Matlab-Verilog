@@ -1,4 +1,3 @@
-function [bler, ber] = simulation(N, K, max_runs, resolution, ebno_vec)
 % 卷积码编译码仿真
 clc;
 clear;
@@ -7,10 +6,10 @@ clear;
 % 信息比特：info_bits；卷积码编码后比特：x；调制后比特：x_ask_100等；加信道噪声后比特：y_noisy_ask_100
 
 % Parameters
-info_length = 1000; % 信息序列长度
+info_length = 100000; % 信息序列长度
 codeRate = 1/2; % 编码速率
-EbNo_dB = 0:2:10; % 比特能量与噪声功率谱密度比（dB）
-% EbNo_dB = 5;
+% EbNo_dB = 0:4:20; % 比特能量与噪声功率谱密度比（dB）
+EbNo_dB = 5;
 
 ASK_Amplitudes_100 = [0, 1]; % ASK 调制幅度（二进制 ASK）
 ASK_Amplitudes_80 = [0.2, 1];
@@ -56,8 +55,12 @@ for i_ebno = 1 : length(EbNo_dB)
     y_noisy_ask_80 = x_ask_80 + noise;
     y_noisy_ask_30 = x_ask_30 + noise;
 
-    % y = awgn(x,EbNo_dB(i),'measured');
 
+    noisePower1 = 1 / (2 * 10^(EbNo_dB(i_ebno)/10)); 
+    noise1 = sqrt(noisePower1) * randn(size(x)); 
+    y = awgn(x_ask_100,EbNo_dB(i_ebno),'measured');
+    noise2 = y - x_ask_100;
+    
     % Demodulate - Hard
     demodulated_y_ask_100 = (y_noisy_ask_100 > 0.5);
     demodulated_y_ask_80 = (y_noisy_ask_80 > 0.6);
@@ -68,21 +71,29 @@ for i_ebno = 1 : length(EbNo_dB)
     decoded_ask_80 = vitdec(demodulated_y_ask_80, trellis, 5*constraintLength, 'trunc', 'hard');
     decoded_ask_30 = vitdec(demodulated_y_ask_30, trellis, 5*constraintLength, 'trunc', 'hard');
 
-    [numErrors_ask_100, ber_ask_100(i_ebno)] = biterr(info_bits, decoded_ask_100);
-    [numErrors_ask_30, ber_ask_80(i_ebno)] = biterr(info_bits, decoded_ask_80);
-    [numErrors_ask_30, ber_ask_30(i_ebno)] = biterr(info_bits, decoded_ask_30);
+%     [numErrors_ask_100, ber_ask_100(i_ebno)] = biterr(info_bits, decoded_ask_100);
+    [~ , ber_ask_100(i_ebno)] = biterr(info_bits, decoded_ask_100);
+    [~ , ber_ask_80(i_ebno)] = biterr(info_bits, decoded_ask_80);
+    [~ , ber_ask_30(i_ebno)] = biterr(info_bits, decoded_ask_30);
 
 end
 
 figure;
 semilogy(EbNo_dB, ber_ask_30, 'o-', EbNo_dB, ber_ask_80, 's-', EbNo_dB, ber_ask_100, '^-');
 legend('ASK 调制深度 30%', 'ASK 调制深度 80%', 'ASK 调制深度 100%');
-title('不同 ASK 调制深度的误码率性能');
+title('不同 ASK 调制深度下的误码率性能');
 xlabel('Eb/No (dB)');
 ylabel('误码率 (BER)');
 grid on;
 
-
+% 三种噪声对比
+figure;
+subplot(3,1,1);
+plot(noise); title('手动计算噪声 - 带码率');
+subplot(3,1,2);
+plot(noise1); title('手动计算噪声 - 不带码率');
+subplot(3,1,3);
+plot(noise2); title('awgn函数生成噪声');
 
 % % 编码调制噪声结果可视化
 % figure;
@@ -93,6 +104,6 @@ grid on;
 % subplot(4,1,3);
 % plot(noise); title('噪声信号');
 % subplot(4,1,4);
-% plot(y_noisy_ask_30); title('带噪声的 ASK 调制信号');
-% end
+% plot(y_noisy_ask_30); title('加入噪声的调制后信号');
+
 
