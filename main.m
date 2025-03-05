@@ -8,28 +8,35 @@ EbNo_dB_vec = 0:2:10;   % 比特能量与噪声功率谱密度比（dB）
 
 
 %% Comparision Parameters
-num_comp = 4;
-
+num_monitor_comp = 1;   % 实时监测第几条对比项
+num_monitor_ebno = 3;   % 实时监测信噪比向量第几项
+legends = {};
 % Variables
 c = 1;
+legends{c} = 'ask80%';
 ask_depths(c) = 0.8;
 constraintLengths(c) = 3;                                   % 卷积码约束长度
 trelliss(c) = poly2trellis(constraintLengths(c), [7 5]);    % 生成多项式为 [111, 101]，约束长度为 3
 
 c = 2;
-ask_depths(c) = 0.8;
+legends{c} = 'ask100%';
+ask_depths(c) = 1;
 constraintLengths(c) = 3;
 trelliss(c) = poly2trellis(constraintLengths(c), [7 5]); 
 
 c = 3;
-ask_depths(c) = 0.8;
+legends{c} = 'ask50%';
+ask_depths(c) = 0.5;
 constraintLengths(c) = 3;
 trelliss(c) = poly2trellis(constraintLengths(c), [7 5]); 
 
 c = 4;
-ask_depths(c) = 0.8;
+legends{c} = 'ask30%';
+ask_depths(c) = 0.3;
 constraintLengths(c) = 3;
 trelliss(c) = poly2trellis(constraintLengths(c), [7 5]); 
+
+num_comp = c;
 
 % ber storage
 ber_sum = zeros(num_comp, length(EbNo_dB_vec));     %每行对应一个对比条件，列对应多个信噪比，命令行窗口打印时矩阵会转置
@@ -47,7 +54,7 @@ hPlot30 = semilogy(print_resolution:print_resolution:max_runs, nan(max_runs / pr
 % hPlot80 = semilogy(EbNo_dB_vec, nan(size(EbNo_dB_vec)), 's-');
 % hPlot100 = semilogy(EbNo_dB_vec, nan(size(EbNo_dB_vec)), '^-');
 hold off;
-legend('ASK 30%');
+legend([legends(num_monitor_comp),legends(num_monitor_comp+1)]);
 title('实时平均 BER 曲线');
 xlabel('Run times');
 ylabel('BER');
@@ -77,7 +84,7 @@ for i_runs = 1 : max_runs
         disp('ebno       ber_ask30 ber_ask80 ber_ask100');
         disp(num2str(print_matrix, '%.6f '));
     % Moniter
-        monitor_matrix(1,i_runs / print_resolution) = print_matrix(3,2)';   %调制深度越浅，信噪比越低，随机性越强
+        monitor_matrix(1,i_runs / print_resolution) = print_matrix(num_monitor_ebno,num_monitor_comp+1)';   %调制深度越浅，信噪比越低，随机性越强
         set(hPlot30, 'YData', monitor_matrix(1,:));
 %         set(hPlot80, 'YData', print_matrix(:, 3)');
 %         set(hPlot100, 'YData', print_matrix(:, 4)');
@@ -99,7 +106,8 @@ for i_comp = 1 : num_comp
     semilogy(EbNo_dB_vec, ber_avg(i_comp, :), markers{i_comp});     % 笔记： {}提取的是单元格内容，()提取的是一个单元格数组的子集。若使用了markers(i)，则marker的类型将是cell而非char
 end
 hold off;
-legend('ASK 调制深度 30%', 'ASK 调制深度 80%', 'ASK 调制深度 100%', 'legend4');
+% legend('ASK 调制深度 30%', 'ASK 调制深度 80%', 'ASK 调制深度 100%', 'legend4');
+legend(legends{1:num_comp});
 title('不同 ASK 调制深度下的误码率性能');
 xlabel('Eb/No (dB)');
 ylabel('误码率 (BER)');
