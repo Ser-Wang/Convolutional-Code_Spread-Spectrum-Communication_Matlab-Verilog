@@ -1,4 +1,4 @@
-function [ber] = conv_ask_ber(info_bits, ask_depth, EbNo_dB_vec, constraintLength, trellis)
+function [ber] = conv_ask_ber(L_length, ask_depth, EbNo_dB_vec, constraintLength, trellis)
 % 卷积码编译码仿真
 % clc;
 % clear;
@@ -10,10 +10,11 @@ function [ber] = conv_ask_ber(info_bits, ask_depth, EbNo_dB_vec, constraintLengt
 % EbNo_dB_vec = 0:2:10;   % 比特能量与噪声功率谱密度比（dB）
 % ask_depth = 1;
 % info_length = 100000;   % 信息序列长度
-% info_bits = randi([0, 1], info_length, 1); % 生成随机二进制信息序列
 % Trellis
 % constraintLength = 3;       % 卷积码约束长度
 % trellis = poly2trellis(constraintLength, [7 5]);    % 生成多项式为 [111, 101]，约束长度为 3
+
+info_bits = randi([0, 1], L_length, 1); % 生成随机二进制信息序列
 
 ASK_amplitude_0 = 1 - ask_depth;
 ASK_amplitude_1 = 1;
