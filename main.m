@@ -1,48 +1,64 @@
 clc;
 clear;
 % System parameters
-max_runs = 30;
+max_runs = 1500;
 % info_length = 256;   % 信息序列长度
 % codeRate = 1/2;         % 编码速率
-EbNo_dB_vec = 0:2:10;   % 比特能量与噪声功率谱密度比（dB）
+EbNo_dB_vec = 0:2:16;   % 比特能量与噪声功率谱密度比（dB）
 
 
 %% Comparision Parameter
 monitor_onoff = 1;      % 1: on; 0: off
 num_monitor_comp = 1;   % 实时监测的对比项
-num_monitor_ebno = 3;   % 实时监测的信噪比项(index of EbNo_dB_vec)
+num_monitor_ebno = 2;   % 实时监测的信噪比项(index of EbNo_dB_vec)
 legends = {};
 
 % Variables
 c = 1;
-legends{c} = ' ask80% ';        % 为保证表格打印效果，字符最好左右留空格
-L_lengths(c) = 256;             % 基带信号码长
-ask_depths(c) = 0.8;            % ASK调制深度
+legends{c} = ' L=8 ';        % 为保证表格打印效果，字符最好左右留空格
+L_lengths(c) = 8;             % 基带信号码长
+ask_depths(c) = 1;            % ASK调制深度
 constraintLengths(c) = 3;       % 卷积码约束长度
 trelliss(c) = poly2trellis(constraintLengths(c), [7 5]);    % 生成多项式为 [111, 101]，约束长度为 3
+traceback_depths(c) = 1*constraintLengths(c);
 
 c = 2;
-legends{c} = ' ask100% ';
+legends{c} = ' L=32 ';
+L_lengths(c) = 32;
+ask_depths(c) = 1;
+constraintLengths(c) = 3;
+trelliss(c) = poly2trellis(constraintLengths(c), [7 5]);
+traceback_depths(c) = 4*constraintLengths(c);
+
+c = 3;
+legends{c} = ' L=256 ';
 L_lengths(c) = 256;
 ask_depths(c) = 1;
 constraintLengths(c) = 3;
-trelliss(c) = poly2trellis(constraintLengths(c), [7 5]); 
+trelliss(c) = poly2trellis(constraintLengths(c), [7 5]);
+traceback_depths(c) = 5*constraintLengths(c);
 
-c = 3;
-legends{c} = ' ask50% ';
-L_lengths(c) = 256;
-ask_depths(c) = 0.5;
+c = 4;
+legends{c} = ' L=1024 ';
+L_lengths(c) = 1024;
+ask_depths(c) = 1;
 constraintLengths(c) = 3;
-trelliss(c) = poly2trellis(constraintLengths(c), [7 5]); 
+trelliss(c) = poly2trellis(constraintLengths(c), [7 5]);
+traceback_depths(c) = 5*constraintLengths(c);
 
-% c = 4;
-% legends{c} = ' ask30% ';
-% L_lengths(c) = 256;
-% ask_depths(c) = 0.3;
-% constraintLengths(c) = 3;
-% trelliss(c) = poly2trellis(constraintLengths(c), [7 5]); 
+c = 5;
+legends{c} = ' L=4096 ';
+L_lengths(c) = 4096;
+ask_depths(c) = 1;
+constraintLengths(c) = 3;
+trelliss(c) = poly2trellis(constraintLengths(c), [7 5]);
+traceback_depths(c) = 5*constraintLengths(c);
 
 num_comp = c;
+
+% ask_depths(:) = 1;
+% constraintLengths(:) = 7;
+% trelliss(:) = poly2trellis(constraintLengths(c), [171 133]);
 
 % ber storage
 ber_sum = zeros(num_comp, length(EbNo_dB_vec));     %每行对应一个对比条件，列对应多个信噪比，命令行窗口打印时矩阵会转置
@@ -77,7 +93,7 @@ for i_runs = 1 : max_runs
 %     [ber(3, :)] = conv_ask_ber(info_bits, ask_depth_100, EbNo_dB_vec, constraintLength, trellis);
 
     for i_comp = 1 : num_comp   % i_comp指第i个对比条件，对应上面的第i行函数调用
-        [ber(i_comp, :)] = conv_ask_ber(L_lengths(i_comp), ask_depths(i_comp), EbNo_dB_vec, constraintLengths(i_comp), trelliss(i_comp));
+        [ber(i_comp, :)] = conv_ask_ber(L_lengths(i_comp), ask_depths(i_comp), EbNo_dB_vec, constraintLengths(i_comp), trelliss(i_comp), traceback_depths(i_comp));
         ber_sum(i_comp, :) = ber_sum(i_comp, :) + ber(i_comp, :);
     end
 

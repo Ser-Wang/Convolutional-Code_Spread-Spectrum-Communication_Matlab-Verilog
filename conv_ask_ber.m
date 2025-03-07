@@ -1,4 +1,4 @@
-function [ber] = conv_ask_ber(L_length, ask_depth, EbNo_dB_vec, constraintLength, trellis)
+function [ber] = conv_ask_ber(L_length, ask_depth, EbNo_dB_vec, constraintLength, trellis, traceback_depth)
 % 卷积码编译码仿真
 % clc;
 % clear;
@@ -51,7 +51,7 @@ for i_ebno = 1 : length(EbNo_dB_vec)
     y_demodulated = (y_noisy > hard_threshold);
 
     % Decode
-    x_decoded = vitdec(y_demodulated, trellis, 5*constraintLength, 'trunc', 'hard');
+    x_decoded = vitdec(y_demodulated, trellis, traceback_depth, 'trunc', 'hard');
 
 %     [numErrors_ask_100, ber_ask_100(i_ebno)] = biterr(info_bits, decoded_ask_100);
     [~ , ber(i_ebno)] = biterr(info_bits, x_decoded);
