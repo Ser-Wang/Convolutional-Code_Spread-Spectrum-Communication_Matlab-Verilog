@@ -1,52 +1,52 @@
 clc;
 clear;
 % System parameters
-max_runs = 100;
+max_runs = 3000;
 % info_length = 256;   % 信息序列长度
 % codeRate = 1/2;         % 编码速率
 EbNo_dB_vec = 0:2:16;   % 比特能量与噪声功率谱密度比（dB）
 
 
 %% Comparision Parameter
-monitor_onoff = 0;      % 1: on; 0: off
+monitor_onoff = 1;      % 1: on; 0: off
 num_monitor_comp = 1;   % 实时监测的对比项
 num_monitor_ebno = 2;   % 实时监测的信噪比项(index of EbNo_dB_vec)
 legends = {};
 
 % Variables
 
-% c = 8;
-% legends{:} = ['1','3','5','7','9','11','13','15'];
-% L_lengths(1:c) = 256;
-% ask_depths(1:c) = 1;
-% constraintLengths(1:c) = 3;
-% trelliss(1:c) = poly2trellis(constraintLengths(c), [5 7]);
-% traceback_depths(1:c) = [1:2:15];
+c = 8;
+legends = {'1','3','5','7','9','11','13','15'};
+L_lengths(1:c) = 256;
+ask_depths(1:c) = 1;
+constraintLengths(1:c) = 3;
+trelliss(1:c) = poly2trellis(constraintLengths(c), [5 7]);
+traceback_depths(1:c) = [1:2:15];
 
 
-c = 1;
-legends{c} = ' L=256, g=[5 7] ';        % 为保证表格打印效果，字符最好左右留空格
-L_lengths(c) = 256;             % 基带信号码长
-ask_depths(c) = 1;            % ASK调制深度
-constraintLengths(c) = 3;       % 卷积码约束长度
-trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);    % 生成多项式为 [111, 101]，约束长度为 3
-traceback_depths(c) = 5*constraintLengths(c);
-
-c = 2;
-legends{c} = ' L=256, g=[5 7 7] ';
-L_lengths(c) = 256;
-ask_depths(c) = 1;
-constraintLengths(c) = 3;
-trelliss(c) = poly2trellis(constraintLengths(c), [5 7 7]);
-traceback_depths(c) = 5*constraintLengths(c);
-
-c = 3;
-legends{c} = ' L=256 g=[133 171]';
-L_lengths(c) = 256;
-ask_depths(c) = 1;
-constraintLengths(c) = 7;
-trelliss(c) = poly2trellis(constraintLengths(c), [133 171]);
-traceback_depths(c) = 5*constraintLengths(c);
+% c = 1;
+% legends{c} = ' L=256, trace=1 ';        % 为保证表格打印效果，字符最好左右留空格
+% L_lengths(c) = 256;             % 基带信号码长
+% ask_depths(c) = 1;            % ASK调制深度
+% constraintLengths(c) = 3;       % 卷积码约束长度
+% trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);    % 生成多项式为 [111, 101]，约束长度为 3
+% traceback_depths(c) = 1;
+% 
+% c = 2;
+% legends{c} = ' L=256, g=[5 7 7] ';
+% L_lengths(c) = 256;
+% ask_depths(c) = 1;
+% constraintLengths(c) = 3;
+% trelliss(c) = poly2trellis(constraintLengths(c), [5 7 7]);
+% traceback_depths(c) = 5*constraintLengths(c);
+% 
+% c = 3;
+% legends{c} = ' L=256 g=[133 171]';
+% L_lengths(c) = 256;
+% ask_depths(c) = 1;
+% constraintLengths(c) = 7;
+% trelliss(c) = poly2trellis(constraintLengths(c), [133 171]);
+% traceback_depths(c) = 5*constraintLengths(c);
 % 
 % c = 4;
 % legends{c} = ' L=256 g=[133 171 165]';
