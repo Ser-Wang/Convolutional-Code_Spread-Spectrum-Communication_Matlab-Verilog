@@ -12,6 +12,7 @@ num_monitor_ebno = 2;   % 实时监测的信噪比项(index of EbNo_dB_vec)
 legends = {};
 % Variables
 
+% 某生成矩阵下回溯深度对BER性能的影响
 % c = 8;
 % legends = {' d=1 ',' d= 3',' d=5 ',' d=7 ', ' d=9 ', ' d=11 ', ' d=13 ', ' d=15 ',};
 % L_lengths(1:c) = 256;
@@ -28,62 +29,74 @@ legends = {};
 % constraintLengths(c) = 3;       % 卷积码约束长度，后续编译码函数中用不到，构建数组是为了方便观察变量设置
 % trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);    % 生成多项式为 [111, 101]，约束长度为 3
 % traceback_depths(c) = 5*constraintLengths(c);
+% 
+% c = 2;
+% legends{c} = ' L=256, g=[5 7 7] ';
+% L_lengths(c) = 256;
+% ask_depths(c) = 1;
+% constraintLengths(c) = 3;
+% trelliss(c) = poly2trellis(constraintLengths(c), [5 7 7]);
+% traceback_depths(c) = 5*constraintLengths(c);
+% 
+% c = 3;
+% legends{c} = ' L=256 g=[133 171]';
+% L_lengths(c) = 256;
+% ask_depths(c) = 1;
+% constraintLengths(c) = 7;
+% trelliss(c) = poly2trellis(constraintLengths(c), [133 171]);
+% traceback_depths(c) = 5*constraintLengths(c);
+% 
+% c = 4;
+% legends{c} = ' L=256 g=[133 171 165]';
+% L_lengths(c) = 256;
+% ask_depths(c) = 1;
+% constraintLengths(c) = 7;
+% trelliss(c) = poly2trellis(constraintLengths(c), [133 171 165]);
+% traceback_depths(c) = 5*constraintLengths(c);
+% 
+% c = 5;
+% legends{c} = ' L=256 g=[5 7 7 7] ';
+% L_lengths(c) = 256;
+% ask_depths(c) = 1;
+% constraintLengths(c) = 3;
+% trelliss(c) = poly2trellis(constraintLengths(c), [5 7 7 7]);
+% traceback_depths(c) = 5*constraintLengths(c);
+% 
+% c = 6;
+% legends{c} = ' L=256 g=[133 171 165 147] ';
+% L_lengths(c) = 4096;
+% ask_depths(c) = 1;
+% constraintLengths(c) = 7;
+% trelliss(c) = poly2trellis(constraintLengths(c), [133 171 165 147]);
+% traceback_depths(c) = 5*constraintLengths(c);
+
 
 c = 1;
 legends{c} = ' nocode ';
 L_lengths(c) = 256;
-encode_type(c) = 0;     % nocode
+encode_type(c) = 1;
 ask_depths(c) = 1;
 constraintLengths(c) = 3;
 trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);
 traceback_depths(c) = 5*constraintLengths(c);
 
 c = 2;
-legends{c} = ' manchester ';
+legends{c} = ' nocode ';
 L_lengths(c) = 256;
-encode_type(c) = 1;     % manchester
+encode_type(c) = 1;
 ask_depths(c) = 1;
 constraintLengths(c) = 3;
 trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);
 traceback_depths(c) = 5*constraintLengths(c);
 
 c = 3;
-legends{c} = ' man+conv ';
-L_lengths(c) = 256;
-encode_type(c) = 2;     % man+conv
-ask_depths(c) = 1;
-constraintLengths(c) = 3;
-trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);
-traceback_depths(c) = 5*constraintLengths(c);
-
-c = 4;
 legends{c} = ' conv ';
 L_lengths(c) = 256;
-encode_type(c) = 3;     % conv
+encode_type(c) = 3;
 ask_depths(c) = 1;
 constraintLengths(c) = 3;
 trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);
 traceback_depths(c) = 5*constraintLengths(c);
-
-c = 5;
-legends{c} = ' conv+dsss reg=[10000] ';
-L_lengths(c) = 256;
-encode_type(c) = 4;     % conv+dsss
-ask_depths(c) = 1;
-constraintLengths(c) = 3;
-trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);
-traceback_depths(c) = 5*constraintLengths(c);
-reg_m(c,:) = [1 0 0 0 0];
-
-c = 6;
-legends{c} = ' conv+dsss reg=[11111] ';
-L_lengths(c) = 256;
-encode_type(c) = 4;     % conv+dsss
-ask_depths(c) = 1;
-constraintLengths(c) = 3;
-trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);
-traceback_depths(c) = 5*constraintLengths(c);
-reg_m(c,:) = [1 1 1 1 1];
 
 num_comp = c;
 
@@ -115,16 +128,10 @@ ber = zeros(num_comp, length(EbNo_dB_vec));
 for i_runs = 1 : max_runs
     for i_comp = 1 : num_comp   % i_comp指第i个对比条件，对应上面的第i行函数调用
         switch encode_type(i_comp)
-            case 0
-                [ber(i_comp, :)] = ber_nocode(L_lengths(i_comp), EbNo_dB_vec, ask_depths(i_comp));
             case 1
-                [ber(i_comp, :)] = ber_man_only(L_lengths(i_comp), EbNo_dB_vec, ask_depths(i_comp));
-            case 2
-                [ber(i_comp, :)] = ber_man_conv(L_lengths(i_comp), EbNo_dB_vec, ask_depths(i_comp), trelliss(i_comp), traceback_depths(i_comp));
+                [ber(i_comp, :)] = ber_nocode(L_lengths(i_comp), EbNo_dB_vec, ask_depths(i_comp));
             case 3
                 [ber(i_comp, :)] = ber_conv(L_lengths(i_comp), EbNo_dB_vec, ask_depths(i_comp), trelliss(i_comp), traceback_depths(i_comp));
-            case 4
-                [ber(i_comp, :)] = ber_conv_dsss(L_lengths(i_comp), EbNo_dB_vec, ask_depths(i_comp), trelliss(i_comp), traceback_depths(i_comp), reg_m(i_comp,:));
         end
         ber_sum(i_comp, :) = ber_sum(i_comp, :) + ber(i_comp, :);
     end
