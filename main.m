@@ -1,76 +1,75 @@
 clc;
 clear;
 % System parameters
-max_runs = 3000;
+max_runs = 300;
 % info_length = 256;   % 信息序列长度
 % codeRate = 1/2;         % 编码速率
 EbNo_dB_vec = 0:2:16;   % 比特能量与噪声功率谱密度比（dB）
 
 
 %% Comparision Parameter
-monitor_onoff = 1;      % 1: on; 0: off
+monitor_onoff = 0;      % 1: on; 0: off
 num_monitor_comp = 1;   % 实时监测的对比项
 num_monitor_ebno = 2;   % 实时监测的信噪比项(index of EbNo_dB_vec)
 legends = {};
 
 % Variables
 
-c = 8;
-legends = {'1','3','5','7','9','11','13','15'};
-L_lengths(1:c) = 256;
-ask_depths(1:c) = 1;
-constraintLengths(1:c) = 3;
-trelliss(1:c) = poly2trellis(constraintLengths(c), [5 7]);
-traceback_depths(1:c) = [1:2:15];
+% c = 8;
+% legends = {' d=1 ',' d= 3',' d=5 ',' d=7 ', ' d=9 ', ' d=11 ', ' d=13 ', ' d=15 ',};
+% L_lengths(1:c) = 256;
+% ask_depths(1:c) = 1;
+% constraintLengths(1:c) = 3;
+% trelliss(1:c) = poly2trellis(constraintLengths(c), [5 7]);
+% traceback_depths(1:c) = [1:2:15];
 
+c = 1;
+legends{c} = ' L=256, g=[5 7] ';        % 为保证表格打印效果，字符最好左右留空格
+L_lengths(c) = 256;             % 基带信号码长
+ask_depths(c) = 1;              % ASK调制深度
+constraintLengths(c) = 3;       % 卷积码约束长度，后续编译码函数中用不到，构建数组是为了方便观察变量设置
+trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);    % 生成多项式为 [111, 101]，约束长度为 3
+traceback_depths(c) = 5*constraintLengths(c);
 
-% c = 1;
-% legends{c} = ' L=256, trace=1 ';        % 为保证表格打印效果，字符最好左右留空格
-% L_lengths(c) = 256;             % 基带信号码长
-% ask_depths(c) = 1;            % ASK调制深度
-% constraintLengths(c) = 3;       % 卷积码约束长度
-% trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);    % 生成多项式为 [111, 101]，约束长度为 3
-% traceback_depths(c) = 1;
-% 
-% c = 2;
-% legends{c} = ' L=256, g=[5 7 7] ';
-% L_lengths(c) = 256;
-% ask_depths(c) = 1;
-% constraintLengths(c) = 3;
-% trelliss(c) = poly2trellis(constraintLengths(c), [5 7 7]);
-% traceback_depths(c) = 5*constraintLengths(c);
-% 
-% c = 3;
-% legends{c} = ' L=256 g=[133 171]';
-% L_lengths(c) = 256;
-% ask_depths(c) = 1;
-% constraintLengths(c) = 7;
-% trelliss(c) = poly2trellis(constraintLengths(c), [133 171]);
-% traceback_depths(c) = 5*constraintLengths(c);
-% 
-% c = 4;
-% legends{c} = ' L=256 g=[133 171 165]';
-% L_lengths(c) = 256;
-% ask_depths(c) = 1;
-% constraintLengths(c) = 7;
-% trelliss(c) = poly2trellis(constraintLengths(c), [133 171 165]);
-% traceback_depths(c) = 5*constraintLengths(c);
-% 
-% c = 5;
-% legends{c} = ' L=256 g=[5 7 7 7] ';
-% L_lengths(c) = 256;
-% ask_depths(c) = 1;
-% constraintLengths(c) = 3;
-% trelliss(c) = poly2trellis(constraintLengths(c), [5 7 7 7]);
-% traceback_depths(c) = 5*constraintLengths(c);
-% 
-% c = 6;
-% legends{c} = ' L=256 g=[133 171 165 147] ';
-% L_lengths(c) = 4096;
-% ask_depths(c) = 1;
-% constraintLengths(c) = 7;
-% trelliss(c) = poly2trellis(constraintLengths(c), [133 171 165 147]);
-% traceback_depths(c) = 5*constraintLengths(c);
+c = 2;
+legends{c} = ' L=256, g=[5 7 7] ';
+L_lengths(c) = 256;
+ask_depths(c) = 1;
+constraintLengths(c) = 3;
+trelliss(c) = poly2trellis(constraintLengths(c), [5 7 7]);
+traceback_depths(c) = 5*constraintLengths(c);
+
+c = 3;
+legends{c} = ' L=256 g=[133 171]';
+L_lengths(c) = 256;
+ask_depths(c) = 1;
+constraintLengths(c) = 7;
+trelliss(c) = poly2trellis(constraintLengths(c), [133 171]);
+traceback_depths(c) = 5*constraintLengths(c);
+
+c = 4;
+legends{c} = ' L=256 g=[133 171 165]';
+L_lengths(c) = 256;
+ask_depths(c) = 1;
+constraintLengths(c) = 7;
+trelliss(c) = poly2trellis(constraintLengths(c), [133 171 165]);
+traceback_depths(c) = 5*constraintLengths(c);
+
+c = 5;
+legends{c} = ' L=256 g=[5 7 7 7] ';
+L_lengths(c) = 256;
+ask_depths(c) = 1;
+constraintLengths(c) = 3;
+trelliss(c) = poly2trellis(constraintLengths(c), [5 7 7 7]);
+traceback_depths(c) = 5*constraintLengths(c);
+
+c = 6;
+legends{c} = ' L=256 g=[133 171 165 147] ';
+L_lengths(c) = 4096;
+ask_depths(c) = 1;
+constraintLengths(c) = 7;
+trelliss(c) = poly2trellis(constraintLengths(c), [133 171 165 147]);
+traceback_depths(c) = 5*constraintLengths(c);
 
 num_comp = c;
 
@@ -107,7 +106,7 @@ for i_runs = 1 : max_runs
 %     [ber(3, :)] = conv_ask_ber(info_bits, ask_depth_100, EbNo_dB_vec, constraintLength, trellis);
 
     for i_comp = 1 : num_comp   % i_comp指第i个对比条件，对应上面的第i行函数调用
-        [ber(i_comp, :)] = conv_ask_ber(L_lengths(i_comp), ask_depths(i_comp), EbNo_dB_vec, constraintLengths(i_comp), trelliss(i_comp), traceback_depths(i_comp));
+        [ber(i_comp, :)] = conv_ask_ber(L_lengths(i_comp), ask_depths(i_comp), EbNo_dB_vec, trelliss(i_comp), traceback_depths(i_comp));
         ber_sum(i_comp, :) = ber_sum(i_comp, :) + ber(i_comp, :);
     end
 

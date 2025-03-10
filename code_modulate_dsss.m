@@ -1,24 +1,13 @@
-function [ber] = conv_ask_ber(L_length, ask_depth, EbNo_dB_vec, trellis, traceback_depth)
-% 卷积码编译码仿真
-% clc;
-% clear;
-% 变量命名说明：
-% 信息比特：info_bits；卷积码编码后比特：x；调制后比特：x_ask_100等；加信道噪声后比特：y_noisy_ask_100
-
-% Parameters
-% codeRate = 1/2;         % 编码速率
-% EbNo_dB_vec = 0:2:10;   % 比特能量与噪声功率谱密度比（dB）
-% ask_depth = 1;
-% info_length = 100000;   % 信息序列长度
-% Trellis
-% constraintLength = 3;       % 卷积码约束长度
-% trellis = poly2trellis(constraintLength, [7 5]);    % 生成多项式为 [111, 101]，约束长度为 3
+function [ber] = code_modulate_dsss(L_length, ask_depth, EbNo_dB_vec, trellis, traceback_depth, m_seq_length)
+% 卷积码仿真：编码-扩频-调制-加噪-解调-解扩-译码
 
 info_bits = randi([0, 1], L_length, 1); % 生成随机二进制信息序列
 
 ASK_amplitude_0 = 1 - ask_depth;
 ASK_amplitude_1 = 1;
 hard_threshold = 1 - ask_depth / 2;
+
+m_seq = 2*mseq(5, [5 3 2])-1;  % 生成31位m序列
 
 % Result storage
 ber = zeros(size(EbNo_dB_vec));
