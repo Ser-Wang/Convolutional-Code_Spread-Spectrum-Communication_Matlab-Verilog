@@ -1,4 +1,4 @@
-# Convolutional_Code_&_Spread_Spectrum_Communication__Matlab_Verilog
+# Convolutional-Code_Spread-Spectrum-Communication_Matlab-Verilog
 Convolutional code & Spread Spectrum Communication, Matlab simulation and Verilog implementation
 
 ## Matlab Simulation
