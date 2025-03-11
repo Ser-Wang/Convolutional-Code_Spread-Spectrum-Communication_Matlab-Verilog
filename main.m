@@ -1,82 +1,19 @@
 clc;
 clear;
+addpath('Functions/')
+addpath('Setting_templates')
 % codeRate = 1/2;         % 编码速率
 
-%% Comparision Parameter
+% Simulation Parameter
 EbNo_dB_vec = 0:2:16;   % 比特能量与噪声功率谱密度比（dB）
-max_runs = 1000;
+max_runs = 3000;
 print_resolution = 10;
 monitor_onoff = 0;      % 1: on; 0: off
 num_monitor_comp = 1;   % 实时监测的对比项
 num_monitor_ebno = 2;   % 实时监测的信噪比项(index of EbNo_dB_vec)
 legends = {};
-% Variables
 
-% c = 8;
-% legends = {' d=1 ',' d= 3',' d=5 ',' d=7 ', ' d=9 ', ' d=11 ', ' d=13 ', ' d=15 ',};
-% L_lengths(1:c) = 256;
-% ask_depths(1:c) = 1;
-% constraintLengths(1:c) = 3;
-% trelliss(1:c) = poly2trellis(constraintLengths(c), [5 7]);
-% traceback_depths(1:c) = [1:2:15];
-
-% c = 1;
-% legends{c} = ' L=256, g=[5 7] ';        % 为保证表格打印效果，字符最好左右留空格
-% L_lengths(c) = 256;             % 基带信号码长
-% encode_type = 3;                % 编码类型，0:none, 1:man, 2:man+conv, 3:conv, 4:conv+dsss
-% ask_depths(c) = 1;              % ASK调制深度
-% constraintLengths(c) = 3;       % 卷积码约束长度，后续编译码函数中用不到，构建数组是为了方便观察变量设置
-% trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);    % 生成多项式为 [111, 101]，约束长度为 3
-% traceback_depths(c) = 5*constraintLengths(c);
-
-c = 1;
-legends{c} = ' taps=[4 1] , reg=[1000] ';
-L_lengths(c) = 256;
-encode_type(c) = 4;     % conv+dsss
-ask_depths(c) = 1;
-constraintLengths(c) = 3;
-trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);
-traceback_depths(c) = 5*constraintLengths(c);
-n_m(c) = 4;
-taps_m(c,:) = [4 1];
-reg_m(c,:) = [1 0 0 0];
-% 
-% c = 2;
-% legends{c} = ' taps=[4 1] , reg=[100] ';
-% L_lengths(c) = 256;
-% encode_type(c) = 4;     % conv+dsss
-% ask_depths(c) = 1;
-% constraintLengths(c) = 3;
-% trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);
-% traceback_depths(c) = 1*constraintLengths(c);
-% n_m(c) = 3;
-% taps_m(c,:) = [3 2];
-% reg_m(c,:) = [1 0 0];
-% 
-% c = 3;
-% legends{c} = ' conv+dsss reg=[10000] ';
-% L_lengths(c) = 256;
-% encode_type(c) = 4;     % conv+dsss
-% ask_depths(c) = 1;
-% constraintLengths(c) = 3;
-% trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);
-% traceback_depths(c) = 1*constraintLengths(c);
-% n_m(c) = 5;
-% taps_m(c,:) = [5 3 2];
-% reg_m(c,:) = [1 0 0 0 0];
-% 
-% c = 4;
-% legends{c} = ' conv+dsss reg=[11111] ';
-% L_lengths(c) = 256;
-% encode_type(c) = 4;     % conv+dsss
-% ask_depths(c) = 1;
-% constraintLengths(c) = 3;
-% trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);
-% traceback_depths(c) = 1*constraintLengths(c);
-% n_m(c) = 5;
-% taps_m(c,:) = [5 3 2];
-% reg_m(c,:) = [1 1 1 1 1];
-
+run('acurrent_parameter.m');
 num_comp = c;
 
 % ber storage
@@ -86,7 +23,7 @@ ber_sum = zeros(num_comp, length(EbNo_dB_vec));     %每行对应一个对比条
 print_matrix = zeros(length(EbNo_dB_vec),c+1);
 print_matrix(:,1) = EbNo_dB_vec';
 
-% 实时更新图形
+% Real-time monitor
 if (monitor_onoff == 1)
     monitor_matrix = nan(max_runs / print_resolution);
     hFig = figure;
@@ -108,18 +45,19 @@ for i_runs = 1 : max_runs
     for i_comp = 1 : num_comp   % i_comp指第i个对比条件，对应上面的第i行函数调用
         switch encode_type(i_comp)
             case 0
-                [ber(i_comp, :)] = ber_nocode(L_lengths(i_comp), EbNo_dB_vec, ask_depths(i_comp));
+                [ber(i_comp, :)] = ber_nocode(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:));
             case 1
-                [ber(i_comp, :)] = ber_man_only(L_lengths(i_comp), EbNo_dB_vec, ask_depths(i_comp));
+                [ber(i_comp, :)] = ber_man_only(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:));
             case 2
-                [ber(i_comp, :)] = ber_man_conv(L_lengths(i_comp), EbNo_dB_vec, ask_depths(i_comp), trelliss(i_comp), traceback_depths(i_comp));
+                [ber(i_comp, :)] = ber_man_conv(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:), trelliss(i_comp), traceback_depths(i_comp));
             case 3
-                [ber(i_comp, :)] = ber_conv(L_lengths(i_comp), EbNo_dB_vec, ask_depths(i_comp), trelliss(i_comp), traceback_depths(i_comp));
+                [ber(i_comp, :)] = ber_conv(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:), trelliss(i_comp), traceback_depths(i_comp));
             case 4
-                [ber(i_comp, :)] = ber_conv_dsss(L_lengths(i_comp), EbNo_dB_vec, ask_depths(i_comp), trelliss(i_comp), traceback_depths(i_comp), n_m(i_comp), taps_m(i_comp,:), reg_m(i_comp,:));
+                [ber(i_comp, :)] = ber_conv_dsss(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:), trelliss(i_comp), traceback_depths(i_comp), dsss_cell(i_comp,:));
         end
         ber_sum(i_comp, :) = ber_sum(i_comp, :) + ber(i_comp, :);
     end
+%     n_m(i_comp), taps_m(i_comp,:), reg_m(i_comp,:)
     % Print
     if(mod(i_runs,print_resolution) == 0)
         for i_comp = 1 : num_comp
