@@ -4,7 +4,7 @@ clear;
 
 %% Comparision Parameter
 EbNo_dB_vec = 0:2:16;   % 比特能量与噪声功率谱密度比（dB）
-max_runs = 100;
+max_runs = 1000;
 print_resolution = 10;
 monitor_onoff = 0;      % 1: on; 0: off
 num_monitor_comp = 1;   % 实时监测的对比项
@@ -30,60 +30,52 @@ legends = {};
 % traceback_depths(c) = 5*constraintLengths(c);
 
 c = 1;
-legends{c} = ' nocode ';
-L_lengths(c) = 256;
-encode_type(c) = 0;     % nocode
-ask_depths(c) = 1;
-constraintLengths(c) = 3;
-trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);
-traceback_depths(c) = 5*constraintLengths(c);
-
-c = 2;
-legends{c} = ' manchester ';
-L_lengths(c) = 256;
-encode_type(c) = 1;     % manchester
-ask_depths(c) = 1;
-constraintLengths(c) = 3;
-trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);
-traceback_depths(c) = 5*constraintLengths(c);
-
-c = 3;
-legends{c} = ' man+conv ';
-L_lengths(c) = 256;
-encode_type(c) = 2;     % man+conv
-ask_depths(c) = 1;
-constraintLengths(c) = 3;
-trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);
-traceback_depths(c) = 5*constraintLengths(c);
-
-c = 4;
-legends{c} = ' conv ';
-L_lengths(c) = 256;
-encode_type(c) = 3;     % conv
-ask_depths(c) = 1;
-constraintLengths(c) = 3;
-trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);
-traceback_depths(c) = 5*constraintLengths(c);
-
-c = 5;
-legends{c} = ' conv+dsss reg=[10000] ';
+legends{c} = ' taps=[4 1] , reg=[1000] ';
 L_lengths(c) = 256;
 encode_type(c) = 4;     % conv+dsss
 ask_depths(c) = 1;
 constraintLengths(c) = 3;
 trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);
 traceback_depths(c) = 5*constraintLengths(c);
-reg_m(c,:) = [1 0 0 0 0];
-
-c = 6;
-legends{c} = ' conv+dsss reg=[11111] ';
-L_lengths(c) = 256;
-encode_type(c) = 4;     % conv+dsss
-ask_depths(c) = 1;
-constraintLengths(c) = 3;
-trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);
-traceback_depths(c) = 5*constraintLengths(c);
-reg_m(c,:) = [1 1 1 1 1];
+n_m(c) = 4;
+taps_m(c,:) = [4 1];
+reg_m(c,:) = [1 0 0 0];
+% 
+% c = 2;
+% legends{c} = ' taps=[4 1] , reg=[100] ';
+% L_lengths(c) = 256;
+% encode_type(c) = 4;     % conv+dsss
+% ask_depths(c) = 1;
+% constraintLengths(c) = 3;
+% trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);
+% traceback_depths(c) = 1*constraintLengths(c);
+% n_m(c) = 3;
+% taps_m(c,:) = [3 2];
+% reg_m(c,:) = [1 0 0];
+% 
+% c = 3;
+% legends{c} = ' conv+dsss reg=[10000] ';
+% L_lengths(c) = 256;
+% encode_type(c) = 4;     % conv+dsss
+% ask_depths(c) = 1;
+% constraintLengths(c) = 3;
+% trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);
+% traceback_depths(c) = 1*constraintLengths(c);
+% n_m(c) = 5;
+% taps_m(c,:) = [5 3 2];
+% reg_m(c,:) = [1 0 0 0 0];
+% 
+% c = 4;
+% legends{c} = ' conv+dsss reg=[11111] ';
+% L_lengths(c) = 256;
+% encode_type(c) = 4;     % conv+dsss
+% ask_depths(c) = 1;
+% constraintLengths(c) = 3;
+% trelliss(c) = poly2trellis(constraintLengths(c), [5 7]);
+% traceback_depths(c) = 1*constraintLengths(c);
+% n_m(c) = 5;
+% taps_m(c,:) = [5 3 2];
+% reg_m(c,:) = [1 1 1 1 1];
 
 num_comp = c;
 
@@ -124,7 +116,7 @@ for i_runs = 1 : max_runs
             case 3
                 [ber(i_comp, :)] = ber_conv(L_lengths(i_comp), EbNo_dB_vec, ask_depths(i_comp), trelliss(i_comp), traceback_depths(i_comp));
             case 4
-                [ber(i_comp, :)] = ber_conv_dsss(L_lengths(i_comp), EbNo_dB_vec, ask_depths(i_comp), trelliss(i_comp), traceback_depths(i_comp), reg_m(i_comp,:));
+                [ber(i_comp, :)] = ber_conv_dsss(L_lengths(i_comp), EbNo_dB_vec, ask_depths(i_comp), trelliss(i_comp), traceback_depths(i_comp), n_m(i_comp), taps_m(i_comp,:), reg_m(i_comp,:));
         end
         ber_sum(i_comp, :) = ber_sum(i_comp, :) + ber(i_comp, :);
     end
