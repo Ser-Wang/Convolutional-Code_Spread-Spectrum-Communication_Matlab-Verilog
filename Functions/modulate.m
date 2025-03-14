@@ -1,4 +1,4 @@
-function [x_modulated] = modulate(modulation_cell, x)
+function [x_modulated] = modulate(modulation_cell, x, input_bip)
 % 调制，支持ASK, BPSK
 % 输入可能为扩频后的双极性序列，也可能为未扩频仅编码的二进制序列
 
@@ -18,8 +18,13 @@ switch lower(modulation_cell{1})
                 x_modulated(i_x) = ASK_amplitude_0; % 幅度为0
             end
         end
+        
     case {'bpsk'}
-        x_modulated = 1 - 2 * x; 
+        if input_bip == 1
+            x_modulated = -1 * x;
+        else
+            x_modulated = 1 - 2 * x;
+        end
 end
 
 

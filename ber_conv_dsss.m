@@ -10,7 +10,9 @@ m_seq = mseq(dsss_cell);    % 双极性形式的m序列
 info_bits = randi([0, 1], L_length, 1); % 生成随机二进制信息序列
 x = convenc(info_bits, trellis);
 spread_x = dsss_spread(x, m_seq);       % 输出为双极性序列
-x_modulated = modulate(modulation_cell, spread_x);
+modulation_input_bip = 1;
+x_modulated = modulate(modulation_cell, spread_x, modulation_input_bip);
+
 
 % Noise
 for i_ebno = 1 : length(EbNo_dB_vec)
