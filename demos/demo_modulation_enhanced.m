@@ -13,20 +13,22 @@ clc;
 
 fc=13560000;    %13.56M
 
-
-L_baseband = 1;
-rates = 2 * 2 *31;         % rate_conv=1/2, rate_man=1/2, rate_dsss=1/31
-TB = 16;                     % 调制后每个码元占载波周期数
-Rb = fc / (rates * TB);     % 数据速率
-Ts = 1/Rb;                  % 基带信号码元宽度(时长)
-samp_ratio = 4;           % 采样倍率，即采样率与载波频率比值，亦即载波每周期采样次数
-dt = 1/(fc*samp_ratio);   % 采样间隔
+L_baseband = 8;
+% rates = 2 * 2 *31;         % rate_conv=1/2, rate_man=1/2, rate_dsss=1/31
+rates = 1;
+TB = 8;                     % 调制后每个码元占载波周期数
+speed = fc / (rates * TB);  % 基带信号数据速率
+Rb = fc / TB;               % 调制前码元速率
+Ts = 1/speed;                  % 基带信号码元宽度(时长)
+samp_ratio = 4;             % 采样倍率，即采样率与载波频率比值，亦即载波每周期采样次数
+dt = 1/(fc*samp_ratio);     % 采样间隔
 TotalT = L_baseband * Ts;   % 总时间
 t = 0:dt:TotalT-dt;         % 时间
 Fs = 1/dt;                  % 采样频率
 
 %% 产生单极性波形
-wave = randi([0,1],1,L_baseband*rates);      % 产生二进制随机码,M为码元个数
+% wave = randi([0,1],1,L_baseband*rates);      % 产生二进制随机码,M为码元个数
+wave = [0 1 0 1 0 0 1 1];
 fz=ones(1,TB*samp_ratio);               % 定义复制的次数L,L为每码元的采样点数
 x1=wave(fz,:);              % 将原来wave的第一行复制L次，称为L*M的矩阵
 jidai=reshape(x1,1,TB*samp_ratio * L_baseband*rates);    % 产生单极性不归零矩形脉冲波形，将刚得到的L*M矩阵，按列重新排列形成1*(L*M)的矩阵
@@ -71,7 +73,8 @@ ylabel('幅度');
 %% 加噪信号经过滤波器
 % 低通滤波器设计
 fp=2*Rb;                   
-b=fir1(30, fp/Fs, boxcar(31));
+% b=fir1(30, fp/Fs, boxcar(31));
+b = fir1(30, fp/Fs, 'low', hamming(31));
 [h,w]=freqz(b, 1,512);      % 生成fir滤波器的频率响应
 lvbo=fftfilt(b,tz);         % 滤波
 figure(3);                   
