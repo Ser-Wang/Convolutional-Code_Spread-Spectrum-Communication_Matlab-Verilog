@@ -5,15 +5,18 @@ addpath('Setting_templates')
 % codeRate = 1/2;         % 编码速率
 
 % Simulation Parameter
-EbNo_dB_vec = 0:2:16;   % 比特能量与噪声功率谱密度比（dB）
-max_runs = 3000;
-print_resolution = 10;
+EbNo_dB_vec = -8:1:14;   % 比特能量与噪声功率谱密度比（dB）
+max_runs = 10000;
+print_resolution = 40;
 monitor_onoff = 0;      % 1: on; 0: off
 num_monitor_comp = 1;   % 实时监测的对比项
 num_monitor_ebno = 2;   % 实时监测的信噪比项(index of EbNo_dB_vec)
 legends = {};
 
-run('acurrent_parameter.m');
+% run('acurrent_parameter.m');
+% run('scheme.m');
+% run('g_compare.m');
+run('traceback_depth.m');
 num_comp = c;
 
 % ber storage
@@ -97,3 +100,5 @@ xlabel('Eb/No (dB)');
 ylabel('误码率 (BER)');
 grid on;
 set(gca, 'YScale', 'log');  %强制设置y轴为对数坐标
+xlim([EbNo_dB_vec(1) EbNo_dB_vec(length(EbNo_dB_vec))]);
+set(gca,'XTick',EbNo_dB_vec(1):2:EbNo_dB_vec(length(EbNo_dB_vec))); % 设置 x 轴刻度间隔为 2
