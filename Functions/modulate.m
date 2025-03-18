@@ -18,7 +18,6 @@ switch lower(modulation_cell{1})
                 x_modulated(i_x) = ASK_amplitude_0; % 幅度为0
             end
         end
-        
     case {'bpsk'}
             x_modulated = 1 - 2 * x;
 end
