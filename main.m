@@ -5,7 +5,8 @@ addpath('Setting_templates')
 % codeRate = 1/2;         % 编码速率
 
 % Simulation Parameter
-EbNo_dB_vec = -8:1:14;   % 比特能量与噪声功率谱密度比（dB）
+% EbNo_dB_vec = -8:1:14;   % 比特能量与噪声功率谱密度比（dB）
+EbNo_dB_vec = 0:1:20;
 max_runs = 10000;
 print_resolution = 40;
 monitor_onoff = 0;      % 1: on; 0: off
@@ -14,9 +15,9 @@ num_monitor_ebno = 2;   % 实时监测的信噪比项(index of EbNo_dB_vec)
 legends = {};
 
 % run('acurrent_parameter.m');
-% run('scheme.m');
+run('scheme.m');
 % run('g_compare.m');
-run('traceback_depth.m');
+% run('info_length.m');
 num_comp = c;
 
 % ber storage
