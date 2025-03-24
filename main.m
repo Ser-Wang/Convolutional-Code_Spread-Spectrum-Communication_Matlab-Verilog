@@ -6,7 +6,7 @@ addpath('Setting_templates')
 
 % Simulation Parameter
 % EbNo_dB_vec = -8:1:14;   % 比特能量与噪声功率谱密度比（dB）
-EbNo_dB_vec = 0:1:20;
+EbNo_dB_vec = -9:1:7;
 max_runs = 100000;
 print_resolution = 40;
 monitor_onoff = 0;      % 1: on; 0: off
@@ -14,10 +14,11 @@ num_monitor_comp = 1;   % 实时监测的对比项
 num_monitor_ebno = 2;   % 实时监测的信噪比项(index of EbNo_dB_vec)
 legends = {};
 
-run('acurrent_parameter.m');
+% run('acurrent_parameter.m');
 % run('scheme.m');
 % run('g_compare.m');
 % run('noise_test.m');
+run('K_sameR.m');
 num_comp = c;
 
 % ber storage
