@@ -5,25 +5,26 @@ addpath('Setting_templates')
 % codeRate = 1/2;         % 编码速率
 
 % Simulation Parameter
-EbNo_dB_vec = -8:1:14;   % 比特能量与噪声功率谱密度比（dB）
-max_runs = 10000;
+% EbNo_dB_vec = -8:1:14;   % 比特能量与噪声功率谱密度比（dB）
+EbNo_dB_vec = 0:1:20;
+max_runs = 100000;
 print_resolution = 40;
 monitor_onoff = 0;      % 1: on; 0: off
 num_monitor_comp = 1;   % 实时监测的对比项
 num_monitor_ebno = 2;   % 实时监测的信噪比项(index of EbNo_dB_vec)
 legends = {};
 
-% run('acurrent_parameter.m');
+run('acurrent_parameter.m');
 % run('scheme.m');
 % run('g_compare.m');
-run('noise_test.m');
+% run('noise_test.m');
 num_comp = c;
 
 % ber storage
 ber_sum = zeros(num_comp, length(EbNo_dB_vec));     %每行对应一个对比条件，列对应多个信噪比，命令行窗口打印时矩阵会转置
-
+ber_num_sum = zeros(num_comp, length(EbNo_dB_vec));
 % Print
-print_matrix = zeros(length(EbNo_dB_vec),c+1);
+print_matrix = zeros(length(EbNo_dB_vec),c+1);  % c列ber数据，首列ebn0
 print_matrix(:,1) = EbNo_dB_vec';
 
 % Real-time monitor
@@ -43,22 +44,24 @@ if (monitor_onoff == 1)
 end
 
 %% Begin
+ber_num = zeros(num_comp, length(EbNo_dB_vec));
 ber = zeros(num_comp, length(EbNo_dB_vec));
 for i_runs = 1 : max_runs
     for i_comp = 1 : num_comp   % i_comp指第i个对比条件，对应上面的第i行函数调用
         switch encode_type(i_comp)
             case 0
-                [ber(i_comp, :)] = ber_nocode(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:));
+                [ber_num(i_comp, :), ber(i_comp, :)] = ber_nocode(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:));
             case 1
-                [ber(i_comp, :)] = ber_man_only(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:));
+                [ber_num(i_comp, :), ber(i_comp, :)] = ber_man_only(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:));
             case 2
-                [ber(i_comp, :)] = ber_man_conv(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:), trelliss(i_comp), traceback_depths(i_comp));
+                [ber_num(i_comp, :), ber(i_comp, :)] = ber_man_conv(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:), trelliss(i_comp), traceback_depths(i_comp));
             case 3
-                [ber(i_comp, :)] = ber_conv(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:), trelliss(i_comp), traceback_depths(i_comp));
+                [ber_num(i_comp, :), ber(i_comp, :)] = ber_conv(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:), trelliss(i_comp), traceback_depths(i_comp));
             case 4
-                [ber(i_comp, :)] = ber_conv_dsss(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:), trelliss(i_comp), traceback_depths(i_comp), dsss_cell(i_comp,:));
+                [ber_num(i_comp, :), ber(i_comp, :)] = ber_conv_dsss(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:), trelliss(i_comp), traceback_depths(i_comp), dsss_cell(i_comp,:));
         end
         ber_sum(i_comp, :) = ber_sum(i_comp, :) + ber(i_comp, :);
+        ber_num_sum(i_comp, :) = ber_num_sum(i_comp, :) + ber_num(i_comp, :);
     end
 %     n_m(i_comp), taps_m(i_comp,:), reg_m(i_comp,:)
     % Print

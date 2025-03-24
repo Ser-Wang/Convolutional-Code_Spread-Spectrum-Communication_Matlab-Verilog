@@ -1,7 +1,8 @@
-function [ber] = ber_conv(L_length, EbNo_dB_vec, modulation_cell, trellis, traceback_depth)
+function [ber_num, ber] = ber_conv(L_length, EbNo_dB_vec, modulation_cell, trellis, traceback_depth)
 % 卷积码BER性能仿真：编码-调制-加噪-解调-译码
 
 % Result storage
+ber_num = zeros(size(EbNo_dB_vec));
 ber = zeros(size(EbNo_dB_vec));
 
 %% Encode
@@ -12,13 +13,14 @@ x_modulated = modulate(modulation_cell, x);
 % Noise
 for i_ebno = 1 : length(EbNo_dB_vec)
     % add noise
-    y_noisy = awgn(x_modulated,EbNo_dB_vec(i_ebno),'measured');
+%     y_noisy = awgn(x_modulated,EbNo_dB_vec(i_ebno),'measured');
+    y_noisy = noisy(x_modulated, EbNo_dB_vec(i_ebno), 0.5);
     % Demodulate - Hard
     y_demodulated = demodulate(modulation_cell, y_noisy);
     % Decode
     x_decoded = vitdec(y_demodulated, trellis, traceback_depth, 'trunc', 'hard');
 %     [numErrors_ask_100, ber_ask_100(i_ebno)] = biterr(info_bits, decoded_ask_100);
-    [~ , ber(i_ebno)] = biterr(info_bits, x_decoded);
+    [ber_num(i_ebno), ber(i_ebno)] = biterr(info_bits, x_decoded);
 end
 
 % figure;
