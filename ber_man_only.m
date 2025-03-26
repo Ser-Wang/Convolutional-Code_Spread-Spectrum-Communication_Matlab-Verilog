@@ -13,7 +13,8 @@ x_modulated = modulate(modulation_cell, x);
 % Noise
 for i_ebno = 1 : length(EbNo_dB_vec)
     % add noise
-    y_noisy = awgn(x_modulated,EbNo_dB_vec(i_ebno),'measured');
+%     y_noisy = awgn(x_modulated,EbNo_dB_vec(i_ebno),'measured');
+    y_noisy = noisy(x_modulated, EbNo_dB_vec(i_ebno), 0.5);
     % Demodulate - Hard
     y_demodulated = demodulate(modulation_cell, y_noisy);
     % Decode
