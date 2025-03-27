@@ -1,4 +1,4 @@
-function [ber_num, ber] = ber_conv_dsss(L_length, EbNo_dB_vec, modulation_cell, trellis, traceback_depth, dsss_cell)
+function [ber_num, ber] = ber_conv_dsss(L_length, EbNo_dB_vec, modulation_cell, trellis, traceback_depth, dsss_cell, R_conv)
 % 卷积码BER性能仿真：编码-扩频-调制-加噪-解调-解扩-译码
 
 % Result storage
@@ -18,7 +18,7 @@ x_modulated = modulate(modulation_cell, spread_x);
 for i_ebno = 1 : length(EbNo_dB_vec)
     % add noise
 %     y_noisy = awgn(x_modulated,EbNo_dB_vec(i_ebno),'measured');
-    y_noisy = noisy(x_modulated, EbNo_dB_vec(i_ebno), 0.5);
+    y_noisy = noisy(x_modulated, EbNo_dB_vec(i_ebno), R_conv);
     % Demodulate - Hard
     y_demodulated = demodulate(modulation_cell, y_noisy);
     % 解扩

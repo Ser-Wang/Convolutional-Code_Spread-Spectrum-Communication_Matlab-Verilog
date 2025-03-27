@@ -55,11 +55,11 @@ for i_runs = 1 : max_runs
             case 1
                 [ber_num(i_comp, :), ber(i_comp, :)] = ber_man_only(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:));
             case 2
-                [ber_num(i_comp, :), ber(i_comp, :)] = ber_man_conv(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:), trelliss(i_comp), traceback_depths(i_comp));
+                [ber_num(i_comp, :), ber(i_comp, :)] = ber_man_conv(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:), trelliss(i_comp), traceback_depths(i_comp), R_conv(i_comp));
             case 3
-                [ber_num(i_comp, :), ber(i_comp, :)] = ber_conv(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:), trelliss(i_comp), traceback_depths(i_comp));
+                [ber_num(i_comp, :), ber(i_comp, :)] = ber_conv(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:), trelliss(i_comp), traceback_depths(i_comp), R_conv(i_comp));
             case 4
-                [ber_num(i_comp, :), ber(i_comp, :)] = ber_conv_dsss(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:), trelliss(i_comp), traceback_depths(i_comp), dsss_cell(i_comp,:));
+                [ber_num(i_comp, :), ber(i_comp, :)] = ber_conv_dsss(L_lengths(i_comp), EbNo_dB_vec, modulation_cell(i_comp,:), trelliss(i_comp), traceback_depths(i_comp), dsss_cell(i_comp,:), R_conv(i_comp));
         end
         ber_sum(i_comp, :) = ber_sum(i_comp, :) + ber(i_comp, :);
         ber_num_sum(i_comp, :) = ber_num_sum(i_comp, :) + ber_num(i_comp, :);
