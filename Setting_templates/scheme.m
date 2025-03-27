@@ -59,7 +59,7 @@ modulation_cell(c,1:2) = {'bpsk', 1};
 % traceback_depths(c) = 5*constraintLengths(c) - 5;
 dsss_cell(c,1:3) = {5, [5 3 2], [1 0 0 0 0]};
 
-constraintLengths(1:c) = 3;
-trelliss(1:c) = poly2trellis(constraintLengths(c), [5 7 7]);
+constraintLengths(1:c) = 5;
+trelliss(1:c) = poly2trellis(constraintLengths(c), [23 35]);
 traceback_depths(1:c) = 5*constraintLengths(c) - 5;
-R_conv(1:c) = 3;    % 码率的倒数，需检查noisy函数写法！！！！
+R_conv(1:c) = 2;    % 码率的倒数，需检查noisy函数写法！！！！
