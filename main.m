@@ -24,7 +24,7 @@ num_comp = c;
 ber_sum = zeros(num_comp, length(EbNo_dB_vec));     %每行对应一个对比条件，列对应多个信噪比，命令行窗口打印时矩阵会转置
 ber_num_sum = zeros(num_comp, length(EbNo_dB_vec));
 % Print
-print_matrix = zeros(length(EbNo_dB_vec),c+1);  % c列ber数据，首列ebn0
+print_matrix = zeros(length(EbNo_dB_vec), num_comp+1);  % c列ber数据，首列ebn0
 print_matrix(:,1) = EbNo_dB_vec';
 
 % Real-time monitor
