@@ -7,16 +7,17 @@ addpath('Setting_templates')
 noise = randn(256,1);
 
 % Simulation Parameter
-EbNo_dB_vec = -4:2:12;
-max_runs = 100000;
-print_resolution = 1000;
-num_comp = 3;
+EbNo_dB_vec = -8:1:10;
+max_runs = 10000000;
+print_resolution = 2000;
+num_comp = 1;
 
 
 EbN0_ratio = 10.^(EbNo_dB_vec/10);
 
 % Parameters
-legends = {' hard     ', ' unquant  ', ' soft-3bit '};
+% legends = {' hard     ', ' unquant  ', ' soft-3bit '};
+legends = {' soft-3bit '};
 L_length = 256;                         % 基带信号码长
 modulation_cell(1,1:2) = {'bpsk', 1};        % 调制类型('ASK' 'BPSK'可选); ASK调制深度(仅ASK时有效), ranges [0,1].
 conv_K = 3;                   % 卷积码约束长度
@@ -44,13 +45,13 @@ for i_runs = 1 : max_runs
 
     % Print
     if(mod(i_runs,print_resolution) == 0)
-        for i_comp = 1 : num_comp
-            print_matrix(:, i_comp + 1) = ber_sum(:, i_comp)./i_runs;
-        end
+%         for i_comp = 1 : num_comp
+%             print_matrix(:, i_comp + 1) = ber_sum(:, i_comp)./i_runs;
+%         end
         disp(' ');
-        disp(['Current run_time = ' num2str(i_runs)]);
-        disp(['ebno      ' legends{:}]);
-        disp(num2str(print_matrix, '%.6f '));
+        disp(['Current run_time = ' num2str(i_runs) ' / ' num2str(max_runs)]);
+%         disp(['ebno      ' legends{:}]);
+%         disp(num2str(print_matrix, '%.6f '));
     end
 end
 
@@ -76,7 +77,8 @@ hold off;
 legend([legends, ' bpsk,nocode']);
 % legend('bpsk,nocode');
 title('误码率性能对比');
-xlabel('Eb/No (dB)');
+% xlabel('Eb/No (dB)');
+xlabel('SNR (dB)')
 ylabel('误码率 (BER)');
 grid on;
 set(gca, 'YScale', 'log');  %强制设置y轴为对数坐标
