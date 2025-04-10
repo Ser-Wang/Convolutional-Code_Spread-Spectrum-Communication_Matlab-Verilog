@@ -5,7 +5,7 @@ addpath('Functions_dectype_comp/')
 addpath('Setting_templates')
 
 % Simulation Parameter
-EbNo_dB_vec = -8:1:8;
+EbNo_dB_vec = -8:1:1;
 max_runs = 10000000;
 print_resolution = 2000;
 num_comp = 1;
@@ -38,8 +38,8 @@ print_matrix(:,1) = EbNo_dB_vec';
 % ber = zeros(num_comp, length(EbNo_dB_vec));
 for i_runs = 1 : max_runs
 
-    [ber_num, ber] = ber_conv_dectype(L_length, EbNo_dB_vec, modulation_cell, trellis, tb_depth, R_conv, num_comp);
-    % [ber_num, ber] = ber_dsss_dectype(L_length, EbNo_dB_vec, modulation_cell, trellis, tb_depth, R_conv, dsss_cell, num_comp);
+    % [ber_num, ber] = ber_conv_dectype(L_length, EbNo_dB_vec, modulation_cell, trellis, tb_depth, R_conv, num_comp);
+    [ber_num, ber] = ber_dsss_dectype(L_length, EbNo_dB_vec, modulation_cell, trellis, tb_depth, R_conv, dsss_cell, num_comp);
 
     ber_sum = ber_sum + ber;
     ber_num_sum = ber_num_sum + ber_num;
@@ -78,7 +78,7 @@ hold off;
 legend(legends);
 % legend([legends, ' bpsk,nocode']);
 % legend('bpsk,nocode');
-title('conv: L=8  (n,k,K)=(2,1,3)  g=[5 7]');
+title('conv+DSSS: L=8  (n,k,K)=(2,1,3)  g=[5 7]');
 % xlabel('Eb/No (dB)');
 xlabel('SNR (dB)')
 ylabel('误码率 (BER)');
