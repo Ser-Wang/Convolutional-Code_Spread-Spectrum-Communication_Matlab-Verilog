@@ -97,7 +97,6 @@ for i_comp = 1 : num_comp
     semilogy(EbNo_dB_vec, ber_avg(i_comp, :), markers{i_comp});     % 笔记： {}提取的是单元格内容，()提取的是一个单元格数组的子集。若使用了markers(i)，则marker的类型将是cell而非char
 end
 hold off;
-% legend('ASK 调制深度 30%', 'ASK 调制深度 80%', 'ASK 调制深度 100%', 'legend4');
 legend(legends{1:num_comp});
 title('误码率性能对比 (2,1,3), g=[5 7]');
 % xlabel('Eb/No (dB)');
