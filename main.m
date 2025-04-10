@@ -5,9 +5,9 @@ addpath('Setting_templates')
 
 % Simulation Parameter
 % EbNo_dB_vec = -8:1:14;   % 比特能量与噪声功率谱密度比（dB）
-EbNo_dB_vec = -12:2:16;
-max_runs = 100;
-print_resolution = 40;
+EbNo_dB_vec = -8:1:16;
+max_runs = 10000000;
+print_resolution = 2000;
 monitor_onoff = 0;      % 1: on; 0: off
 num_monitor_comp = 1;   % 实时监测的对比项
 num_monitor_ebno = 2;   % 实时监测的信噪比项(index of EbNo_dB_vec)
@@ -17,7 +17,8 @@ legends = {};
 % run('scheme.m');
 % run('g_compare.m');
 % run('noise_test.m');
-run('K_sameR.m');
+% run('K_sameR.m');
+run('final.m')
 num_comp = c;
 
 % ber storage
@@ -46,6 +47,7 @@ end
 %% Begin
 ber_num = zeros(num_comp, length(EbNo_dB_vec));
 ber = zeros(num_comp, length(EbNo_dB_vec));
+
 for i_runs = 1 : max_runs
     for i_comp = 1 : num_comp   % i_comp指第i个对比条件，对应上面的第i行函数调用
         switch encode_type(i_comp)
@@ -66,14 +68,13 @@ for i_runs = 1 : max_runs
 %     n_m(i_comp), taps_m(i_comp,:), reg_m(i_comp,:)
     % Print
     if(mod(i_runs,print_resolution) == 0)
-        for i_comp = 1 : num_comp
-            print_matrix(:, i_comp + 1) = ber_sum(i_comp, :)'./i_runs;
-        end
+        % for i_comp = 1 : num_comp
+        %     print_matrix(:, i_comp + 1) = ber_sum(i_comp, :)'./i_runs;
+        % end
         disp(' ');
-        disp(['Current run_time = ' num2str(i_runs)]);
-        %         disp('ebno       ber_ask30 ber_ask80 ber_ask100');
-        disp(['ebno      ' legends{:}]);
-        disp(num2str(print_matrix, '%.6f '));
+        disp(['Current run_time = ' num2str(i_runs) ' / ' num2str(max_runs)]);
+        % disp(['ebno      ' legends{:}]);
+        % disp(num2str(print_matrix, '%.6f '));
         % Moniter
         if(monitor_onoff == 1)
             monitor_matrix(1,i_runs / print_resolution) = print_matrix(num_monitor_ebno,num_monitor_comp+1)';
@@ -98,8 +99,9 @@ end
 hold off;
 % legend('ASK 调制深度 30%', 'ASK 调制深度 80%', 'ASK 调制深度 100%', 'legend4');
 legend(legends{1:num_comp});
-title('误码率性能对比');
-xlabel('Eb/No (dB)');
+title('误码率性能对比 (2,1,3), g=[5 7]');
+% xlabel('Eb/No (dB)');
+xlabel('SNR (dB)');
 ylabel('误码率 (BER)');
 grid on;
 set(gca, 'YScale', 'log');  %强制设置y轴为对数坐标
