@@ -26,19 +26,19 @@ for i_ebno = 1 : length(EbNo_dB_vec)
 
 
     % Quantize
-%     partition = [-1*L_mseq*(6*sigma+2)*3/8:L_mseq*(6*sigma+2)/8:L_mseq*(6*sigma+2)*3/8];    %设置等距量化区间，进行均匀量化
-%     codebook = [2^3-1:-1:0];      %设置比量化区间partition对应的信号量化值多一个向量
-%     [~,quants,~] = quantiz(despread_unquant,partition,codebook);
+    partition = [-1*L_mseq*(6*sigma+2)*3/8:L_mseq*(6*sigma+2)/8:L_mseq*(6*sigma+2)*3/8];    %设置等距量化区间，进行均匀量化
+    codebook = [2^3-1:-1:0];      %设置比量化区间partition对应的信号量化值多一个向量
+    [~,quants,~] = quantiz(despread_unquant,partition,codebook);
 
     % Decode
 %     x_esti_hard = vitdec(despread_hard, trellis, traceback_depth, 'trunc', 'hard');
-    x_esti_unquant = vitdec(despread_unquant, trellis, traceback_depth, 'trunc', 'unquant');
-%     x_esti_3bit = vitdec(quants,trellis,traceback_depth,'trunc','soft',3);
-%     x_esti_3bit_T = x_esti_3bit';
+    % x_esti_unquant = vitdec(despread_unquant, trellis, traceback_depth, 'trunc', 'unquant');
+    x_esti_3bit = vitdec(quants,trellis,traceback_depth,'trunc','soft',3);
+    x_esti_3bit_T = x_esti_3bit';
 %     [ber_num(i_ebno,1), ber(i_ebno,1)] = biterr(info_bits, x_esti_hard);
-    [ber_num(i_ebno,1), ber(i_ebno,1)] = biterr(info_bits, x_esti_unquant);
-%     [ber_num(i_ebno,3), ber(i_ebno,3)] = biterr(info_bits, x_esti_3bit_T);
-%     [ber_num(i_ebno,1), ber(i_ebno,1)] = biterr(info_bits, x_esti_3bit_T);
+    % [ber_num(i_ebno,2), ber(i_ebno,2)] = biterr(info_bits, x_esti_unquant);
+    % [ber_num(i_ebno,3), ber(i_ebno,3)] = biterr(info_bits, x_esti_3bit_T);
+    [ber_num(i_ebno,1), ber(i_ebno,1)] = biterr(info_bits, x_esti_3bit_T);
 end
 
 end

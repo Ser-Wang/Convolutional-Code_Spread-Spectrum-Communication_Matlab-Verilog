@@ -7,7 +7,7 @@ addpath('Setting_templates')
 noise = randn(256,1);
 
 % Simulation Parameter
-EbNo_dB_vec = -8:1:-3;
+EbNo_dB_vec = -8:1:-1;
 max_runs = 10000000;
 print_resolution = 2000;
 num_comp = 1;
@@ -16,8 +16,8 @@ EbN0_ratio = 10.^(EbNo_dB_vec/10);
 
 % Parameters
 % legends = {' hard     ', ' unquant  ', ' soft-3bit '};
-% legends = {' soft-3bit '};
-legends = {' unquant  '};
+legends = {' soft-3bit '};
+% legends = {' unquant  '};
 L_length = 256;                         % 基带信号码长
 modulation_cell(1,1:2) = {'bpsk', 1};        % 调制类型('ASK' 'BPSK'可选); ASK调制深度(仅ASK时有效), ranges [0,1].
 conv_K = 3;                   % 卷积码约束长度
