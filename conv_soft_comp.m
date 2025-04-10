@@ -4,10 +4,8 @@ addpath('Functions/')
 addpath('Functions_dectype_comp/')
 addpath('Setting_templates')
 
-noise = randn(256,1);
-
 % Simulation Parameter
-EbNo_dB_vec = -8:1:-1;
+EbNo_dB_vec = -8:1:8;
 max_runs = 10000000;
 print_resolution = 2000;
 num_comp = 1;
@@ -18,11 +16,12 @@ EbN0_ratio = 10.^(EbNo_dB_vec/10);
 % legends = {' hard     ', ' unquant  ', ' soft-3bit '};
 legends = {' soft-3bit '};
 % legends = {' unquant  '};
-L_length = 256;                         % 基带信号码长
+L_length = 8;                         % 基带信号码长
 modulation_cell(1,1:2) = {'bpsk', 1};        % 调制类型('ASK' 'BPSK'可选); ASK调制深度(仅ASK时有效), ranges [0,1].
 conv_K = 3;                   % 卷积码约束长度
 trellis = poly2trellis(conv_K, [5 7]);    % 卷积码生成矩阵
-tb_depth = 5*conv_K - 5;        % 回溯深度，经验公式tb_depth = 5v
+% tb_depth = 5*conv_K - 5;        % 回溯深度，经验公式tb_depth = 5v
+tb_depth = 8;
 R_conv = 3;
 dsss_cell = {3, [3 1], [1 0 0 0]};
 
@@ -39,8 +38,8 @@ print_matrix(:,1) = EbNo_dB_vec';
 % ber = zeros(num_comp, length(EbNo_dB_vec));
 for i_runs = 1 : max_runs
 
-%     [ber_num, ber] = ber_conv_dectype(L_length, EbNo_dB_vec, modulation_cell, trellis, tb_depth, R_conv, num_comp);
-    [ber_num, ber] = ber_dsss_dectype(L_length, EbNo_dB_vec, modulation_cell, trellis, tb_depth, R_conv, dsss_cell, num_comp);
+    [ber_num, ber] = ber_conv_dectype(L_length, EbNo_dB_vec, modulation_cell, trellis, tb_depth, R_conv, num_comp);
+    % [ber_num, ber] = ber_dsss_dectype(L_length, EbNo_dB_vec, modulation_cell, trellis, tb_depth, R_conv, dsss_cell, num_comp);
 
     ber_sum = ber_sum + ber;
     ber_num_sum = ber_num_sum + ber_num;
@@ -79,7 +78,7 @@ hold off;
 legend(legends);
 % legend([legends, ' bpsk,nocode']);
 % legend('bpsk,nocode');
-title('误码率性能对比 (2,1,3), g=[5 7], conv+dsss');
+title('conv: L=8  (n,k,K)=(2,1,3)  g=[5 7]');
 % xlabel('Eb/No (dB)');
 xlabel('SNR (dB)')
 ylabel('误码率 (BER)');
