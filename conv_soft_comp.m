@@ -16,12 +16,12 @@ EbN0_ratio = 10.^(EbNo_dB_vec/10);
 % legends = {' hard     ', ' unquant  ', ' soft-3bit '};
 legends = {' soft-3bit '};
 % legends = {' unquant  '};
-L_length = 8;                         % 基带信号码长
+L_length = 48;                         % 基带信号码长
 modulation_cell(1,1:2) = {'bpsk', 1};        % 调制类型('ASK' 'BPSK'可选); ASK调制深度(仅ASK时有效), ranges [0,1].
 conv_K = 3;                   % 卷积码约束长度
 trellis = poly2trellis(conv_K, [5 7]);    % 卷积码生成矩阵
-% tb_depth = 5*conv_K - 5;        % 回溯深度，经验公式tb_depth = 5v
-tb_depth = 8;
+tb_depth = 5*conv_K - 5;        % 回溯深度，经验公式tb_depth = 5v
+% tb_depth = 8;
 R_conv = 3;
 dsss_cell = {3, [3 1], [1 0 0 0]};
 
@@ -78,7 +78,7 @@ hold off;
 legend(legends);
 % legend([legends, ' bpsk,nocode']);
 % legend('bpsk,nocode');
-title('conv+DSSS: L=8  (n,k,K)=(2,1,3)  g=[5 7]');
+title('conv+DSSS: L=48  (n,k,K)=(2,1,3)  g=[5 7]');
 % xlabel('Eb/No (dB)');
 xlabel('SNR (dB)')
 ylabel('误码率 (BER)');
